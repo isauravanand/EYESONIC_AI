@@ -1,4 +1,4 @@
-# EYSONIC 2.0 👁️🔊 
+# EYSONIC AI 👁️🔊 
 **AI-Based Smart Vision Assistive Device**
 
 EYSONIC 2.0 is an advanced hybrid assistive system designed to help visually impaired individuals navigate their surroundings. By upgrading from a purely ultrasonic-based hardware device, this system integrates real-time **Computer Vision** and **Artificial Intelligence** to not just detect obstacles, but intelligently identify objects and recognize known people, providing instant voice feedback.
