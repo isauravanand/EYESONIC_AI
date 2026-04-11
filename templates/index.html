@@ -1,0 +1,2468 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>EYSONIC AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --bg: #050508;
+            --bg2: #0c0c14;
+            --surface: #10101c;
+            --surface2: #16162a;
+            --border: #1e1e36;
+            --border2: #2a2a48;
+            --v: #6c47ff;
+            --v2: #9b72ff;
+            --cyan: #00d4ff;
+            --cyan2: #00fff7;
+            --red: #ff3b5c;
+            --green: #00e87a;
+            --text: #f0eeff;
+            --muted: #5a5a8a;
+            --muted2: #7a7aa8;
+            --font: 'Syne', sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            display: flex;
+            flex-direction: column;
+            position: relative
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -20%;
+            left: -10%;
+            width: 55%;
+            height: 55%;
+            background: radial-gradient(ellipse, rgba(108, 71, 255, 0.07) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0
+        }
+
+        /* ── HEADER ── */
+        header {
+            position: relative;
+            z-index: 10;
+            background: rgba(5, 5, 8, 0.96);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text)
+        }
+
+        .logo-eye {
+            width: 34px;
+            height: 34px;
+            border-radius: 50% 50% 50% 0;
+            background: linear-gradient(135deg, var(--v), var(--cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            box-shadow: 0 0 22px rgba(108, 71, 255, 0.5);
+            animation: eye-pulse 3s ease-in-out infinite;
+            flex-shrink: 0
+        }
+
+        @keyframes eye-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 22px rgba(108, 71, 255, 0.5)
+            }
+
+            50% {
+                box-shadow: 0 0 38px rgba(0, 212, 255, 0.6), 0 0 60px rgba(108, 71, 255, 0.25)
+            }
+        }
+
+        .logo-text {
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 3px
+        }
+
+        .logo-sub {
+            font-size: 0.58rem;
+            color: var(--muted2);
+            letter-spacing: 2px;
+            font-family: var(--mono);
+            margin-top: 1px
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .lang-badge {
+            font-family: var(--mono);
+            font-size: 0.68rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            color: var(--cyan);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none
+        }
+
+        .lang-badge:hover {
+            background: rgba(0, 212, 255, 0.18);
+            border-color: rgba(0, 212, 255, 0.5)
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.7rem;
+            font-family: var(--mono);
+            color: var(--muted2);
+            transition: all 0.3s
+        }
+
+        .status-pill.live {
+            border-color: rgba(0, 232, 122, 0.4);
+            color: var(--green);
+            background: rgba(0, 232, 122, 0.07)
+        }
+
+        .sdot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--muted);
+            transition: all 0.3s
+        }
+
+        .status-pill.live .sdot {
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: blink 1.5s infinite
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0.3
+            }
+        }
+
+        /* ── CONTROLS ── */
+        .controls {
+            position: relative;
+            z-index: 10;
+            background: rgba(10, 10, 18, 0.96);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+            overflow-x: auto
+        }
+
+        .controls::-webkit-scrollbar {
+            display: none
+        }
+
+        .ctrl {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex-shrink: 0
+        }
+
+        .ctrl-lbl {
+            font-size: 0.57rem;
+            font-weight: 700;
+            font-family: var(--mono);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px
+        }
+
+        select {
+            background: var(--surface2);
+            color: var(--text);
+            border: 1px solid var(--border2);
+            border-radius: 6px;
+            padding: 4px 26px 4px 8px;
+            font-size: 0.76rem;
+            font-family: var(--font);
+            cursor: pointer;
+            outline: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%235a5a8a'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 7px center;
+            transition: border-color 0.2s
+        }
+
+        select:hover {
+            border-color: var(--v2)
+        }
+
+        select:focus {
+            border-color: var(--cyan)
+        }
+
+        .cdiv {
+            width: 1px;
+            height: 26px;
+            background: var(--border2);
+            flex-shrink: 0
+        }
+
+        .btn-start {
+            margin-left: auto;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--v), #4f2bdb);
+            border: none;
+            color: #fff;
+            font-family: var(--font);
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(108, 71, 255, 0.4);
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden
+        }
+
+        .btn-start::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), transparent);
+            opacity: 0;
+            transition: opacity 0.2s
+        }
+
+        .btn-start:hover::before {
+            opacity: 1
+        }
+
+        .btn-start:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 28px rgba(108, 71, 255, 0.55)
+        }
+
+        .btn-start.running {
+            background: linear-gradient(135deg, var(--red), #c0162e);
+            box-shadow: 0 4px 20px rgba(255, 59, 92, 0.4)
+        }
+
+        .btn-start.running:hover {
+            box-shadow: 0 6px 28px rgba(255, 59, 92, 0.55)
+        }
+
+        .sicon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0.9
+        }
+
+        .btn-start.running .sicon {
+            border-radius: 2px
+        }
+
+        /* ── MAIN GRID ── */
+        main {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1
+        }
+
+        /* ── CAMERA ── */
+        .cam-wrap {
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden
+        }
+
+        #video {
+            display: none
+        }
+
+        /* video canvas — fills the panel, draws the raw camera feed */
+        #canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block
+        }
+
+        /* overlay canvas — sits on top, transparent bg, redraws boxes every frame */
+        #overlay {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none;
+            z-index: 3
+        }
+
+        .cam-idle {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            background: radial-gradient(ellipse at center, #0c0c1e 0%, var(--bg) 100%);
+            transition: opacity 0.4s;
+            z-index: 2
+        }
+
+        .cam-idle.hidden {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        .idle-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 2px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            box-shadow: 0 0 40px rgba(108, 71, 255, 0.18);
+            animation: float 4s ease-in-out infinite
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+
+        .cam-idle h2 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--muted2);
+            letter-spacing: 2px
+        }
+
+        .cam-idle p {
+            font-size: 0.74rem;
+            color: var(--muted);
+            font-family: var(--mono);
+            text-align: center;
+            max-width: 260px;
+            line-height: 1.6
+        }
+
+        .hud-c {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-color: rgba(108, 71, 255, 0.4);
+            border-style: solid;
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none
+        }
+
+        .cam-wrap.live .hud-c {
+            opacity: 1
+        }
+
+        .hud-tl {
+            top: 14px;
+            left: 14px;
+            border-width: 2px 0 0 2px
+        }
+
+        .hud-tr {
+            top: 14px;
+            right: 14px;
+            border-width: 2px 2px 0 0
+        }
+
+        .hud-bl {
+            bottom: 14px;
+            left: 14px;
+            border-width: 0 0 2px 2px
+        }
+
+        .hud-br {
+            bottom: 14px;
+            right: 14px;
+            border-width: 0 2px 2px 0
+        }
+
+        .scanline {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.35), transparent);
+            pointer-events: none;
+            opacity: 0;
+            animation: scan 4s linear infinite
+        }
+
+        .cam-wrap.live .scanline {
+            opacity: 1
+        }
+
+        @keyframes scan {
+            0% {
+                top: -2px
+            }
+
+            100% {
+                top: 100%
+            }
+        }
+
+        .danger-flash {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 59, 92, 0.07);
+            pointer-events: none;
+            opacity: 0
+        }
+
+        .danger-flash.pop {
+            animation: dpop 0.5s ease-out forwards
+        }
+
+        @keyframes dpop {
+            0% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg2);
+            flex-shrink: 0
+        }
+
+        .tab {
+            flex: 1;
+            padding: 11px 4px;
+            text-align: center;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            position: relative
+        }
+
+        .tab:hover {
+            color: var(--muted2)
+        }
+
+        .tab.active {
+            color: var(--cyan);
+            border-bottom-color: var(--cyan)
+        }
+
+        .tbadge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            min-width: 15px;
+            height: 15px;
+            background: var(--v);
+            border-radius: 8px;
+            font-size: 0.52rem;
+            line-height: 15px;
+            text-align: center;
+            color: #fff;
+            padding: 0 3px;
+            opacity: 0;
+            transition: opacity 0.2s
+        }
+
+        .tbadge.show {
+            opacity: 1
+        }
+
+        .panel {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            gap: 8px;
+            flex-direction: column
+        }
+
+        .panel.active {
+            display: flex
+        }
+
+        .panel::-webkit-scrollbar {
+            width: 3px
+        }
+
+        .panel::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 2px
+        }
+
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--muted);
+            text-align: center;
+            padding: 20px
+        }
+
+        .empty-state i {
+            font-size: 2rem;
+            opacity: 0.25;
+            font-style: normal
+        }
+
+        .empty-state p {
+            font-size: 0.73rem;
+            line-height: 1.5;
+            max-width: 180px
+        }
+
+        /* detection card */
+        .dc {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            animation: cin 0.2s ease-out;
+            transition: border-color 0.2s;
+            flex-shrink: 0
+        }
+
+        @keyframes cin {
+            from {
+                opacity: 0;
+                transform: translateY(-4px)
+            }
+
+            to {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .dc.danger {
+            border-color: rgba(255, 59, 92, 0.45);
+            background: rgba(255, 59, 92, 0.05)
+        }
+
+        .dc-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px
+        }
+
+        .dc-lbl {
+            font-weight: 700;
+            font-size: 0.88rem;
+            line-height: 1.2
+        }
+
+        .dc-sub {
+            font-size: 0.65rem;
+            color: var(--cyan);
+            font-family: var(--mono);
+            margin-top: 1px
+        }
+
+        .dc-conf {
+            font-family: var(--mono);
+            font-size: 0.63rem;
+            font-weight: 600;
+            background: rgba(108, 71, 255, 0.18);
+            border: 1px solid rgba(108, 71, 255, 0.28);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--v2);
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+
+        .dc.danger .dc-conf {
+            background: rgba(255, 59, 92, 0.18);
+            border-color: rgba(255, 59, 92, 0.3);
+            color: var(--red)
+        }
+
+        .dc-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap
+        }
+
+        .dtag {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border2);
+            border-radius: 4px;
+            padding: 2px 6px;
+            color: var(--muted2);
+            display: flex;
+            align-items: center;
+            gap: 3px
+        }
+
+        .dtag.red {
+            border-color: rgba(255, 59, 92, 0.3);
+            color: var(--red);
+            background: rgba(255, 59, 92, 0.07)
+        }
+
+        .cbar {
+            height: 2px;
+            background: var(--border);
+            border-radius: 1px;
+            margin-top: 7px;
+            overflow: hidden
+        }
+
+        .cfill {
+            height: 100%;
+            border-radius: 1px;
+            background: linear-gradient(90deg, var(--v), var(--cyan));
+            transition: width 0.3s
+        }
+
+        .dc.danger .cfill {
+            background: linear-gradient(90deg, var(--red), #ff6b82)
+        }
+
+        /* face card */
+        .fc {
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 10px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: cin 0.2s ease-out;
+            flex-shrink: 0
+        }
+
+        .fc.known {
+            border-color: rgba(0, 232, 122, 0.32)
+        }
+
+        .fc.dface {
+            border-color: rgba(255, 59, 92, 0.5);
+            background: rgba(255, 59, 92, 0.05);
+            animation: cin 0.2s ease-out, fpulse 1s ease-in-out infinite
+        }
+
+        @keyframes fpulse {
+
+            0%,
+            100% {
+                border-color: rgba(255, 59, 92, 0.5)
+            }
+
+            50% {
+                border-color: rgba(255, 59, 92, 0.9)
+            }
+        }
+
+        .favatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 2px solid var(--border2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0
+        }
+
+        .fc.known .favatar {
+            border-color: rgba(0, 232, 122, 0.5)
+        }
+
+        .fc.dface .favatar {
+            border-color: rgba(255, 59, 92, 0.7)
+        }
+
+        .finfo {
+            flex: 1;
+            min-width: 0
+        }
+
+        .fname {
+            font-weight: 700;
+            font-size: 0.86rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis
+        }
+
+        .fmeta {
+            font-family: var(--mono);
+            font-size: 0.6rem;
+            color: var(--muted2);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap
+        }
+
+        .dtag-red {
+            font-size: 0.56rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            background: rgba(255, 59, 92, 0.18);
+            border: 1px solid rgba(255, 59, 92, 0.4);
+            color: var(--red);
+            border-radius: 3px;
+            padding: 1px 5px
+        }
+
+        /* section header */
+        .sec-head {
+            font-size: 0.6rem;
+            font-weight: 700;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted);
+            padding: 3px 0 7px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0
+        }
+
+        .known-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px
+        }
+
+        .kchip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(108, 71, 255, 0.1);
+            border: 1px solid rgba(108, 71, 255, 0.22);
+            border-radius: 6px;
+            padding: 5px 9px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: default
+        }
+
+        .kchip:hover {
+            background: rgba(108, 71, 255, 0.18);
+            border-color: rgba(108, 71, 255, 0.4)
+        }
+
+        .kdot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 4px var(--green)
+        }
+
+        /* ── TRAIN PANEL ── */
+        .panel#panel-train {
+            padding: 0;
+            overflow: hidden
+        }
+
+        .train-scroll {
+            height: 100%;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px
+        }
+
+        .train-scroll::-webkit-scrollbar {
+            width: 3px
+        }
+
+        .train-scroll::-webkit-scrollbar-thumb {
+            background: var(--border2);
+            border-radius: 2px
+        }
+
+        .flabel {
+            font-size: 0.58rem;
+            font-weight: 700;
+            font-family: var(--mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 5px;
+            display: block
+        }
+
+        .finput {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border2);
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-family: var(--font);
+            font-size: 0.84rem;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s
+        }
+
+        .finput::placeholder {
+            color: var(--muted)
+        }
+
+        .finput:focus {
+            border-color: var(--v2);
+            box-shadow: 0 0 0 3px rgba(108, 71, 255, 0.14)
+        }
+
+        /* Train camera box */
+        .tcam-box {
+            position: relative;
+            background: #000;
+            border-radius: 10px;
+            border: 1px solid var(--border2);
+            overflow: hidden;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
+        }
+
+        #train-vid {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            transform: scaleX(-1)
+        }
+
+        #snap-canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+            display: none
+        }
+
+        .tcam-idle {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 0.72rem;
+            text-align: center;
+            padding: 10px
+        }
+
+        .tcam-idle span {
+            font-size: 1.8rem;
+            opacity: 0.25
+        }
+
+        .countdown-over {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s
+        }
+
+        .countdown-over.show {
+            opacity: 1
+        }
+
+        .cd-num {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+            animation: cdpop 0.3s ease-out
+        }
+
+        @keyframes cdpop {
+            from {
+                transform: scale(1.35);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        .snap-flash {
+            position: absolute;
+            inset: 0;
+            background: #fff;
+            opacity: 0;
+            pointer-events: none;
+            border-radius: 10px
+        }
+
+        .snap-flash.go {
+            animation: flashout 0.35s ease-out forwards
+        }
+
+        @keyframes flashout {
+            0% {
+                opacity: 0.85
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        /* captured preview */
+        .cap-prev {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 232, 122, 0.3);
+            display: none;
+            position: relative;
+            flex-shrink: 0
+        }
+
+        .cap-prev img {
+            width: 100%;
+            display: block;
+            transform: scaleX(-1)
+        }
+
+        .cap-prev-lbl {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.8), transparent);
+            padding: 10px;
+            font-size: 0.65rem;
+            font-family: var(--mono);
+            color: var(--green);
+            text-align: center
+        }
+
+        /* buttons in train */
+        .tcam-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px
+        }
+
+        .btn-tc {
+            padding: 9px;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 0.76rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            letter-spacing: 0.3px
+        }
+
+        .btn-open {
+            background: rgba(0, 212, 255, 0.12);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--cyan)
+        }
+
+        .btn-open:hover {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.55)
+        }
+
+        .btn-snap {
+            background: linear-gradient(135deg, var(--v), #4f2bdb);
+            color: #fff;
+            box-shadow: 0 3px 14px rgba(108, 71, 255, 0.35)
+        }
+
+        .btn-snap:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 20px rgba(108, 71, 255, 0.5)
+        }
+
+        .btn-snap:disabled {
+            opacity: 0.38;
+            transform: none;
+            cursor: not-allowed;
+            box-shadow: none
+        }
+
+        .btn-train {
+            width: 100%;
+            padding: 11px;
+            background: linear-gradient(135deg, var(--green), #00a857);
+            border: none;
+            border-radius: 8px;
+            font-family: var(--font);
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            box-shadow: 0 3px 16px rgba(0, 232, 122, 0.28);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px
+        }
+
+        .btn-train:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 22px rgba(0, 232, 122, 0.42)
+        }
+
+        .btn-train:disabled {
+            opacity: 0.38;
+            transform: none;
+            cursor: not-allowed;
+            box-shadow: none
+        }
+
+        .tmsg {
+            border-radius: 8px;
+            padding: 9px 12px;
+            font-size: 0.75rem;
+            font-family: var(--mono);
+            display: none;
+            line-height: 1.5
+        }
+
+        .tmsg.ok {
+            background: rgba(0, 232, 122, 0.1);
+            border: 1px solid rgba(0, 232, 122, 0.28);
+            color: var(--green)
+        }
+
+        .tmsg.err {
+            background: rgba(255, 59, 92, 0.09);
+            border: 1px solid rgba(255, 59, 92, 0.28);
+            color: var(--red)
+        }
+
+        .tmsg.info {
+            background: rgba(0, 212, 255, 0.07);
+            border: 1px solid rgba(0, 212, 255, 0.22);
+            color: var(--cyan)
+        }
+
+        /* ── FIRE ALARM OVERLAY ── */
+        .fire-alarm {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            pointer-events: none;
+            background: repeating-linear-gradient(0deg,
+                    transparent, transparent 48%,
+                    rgba(255, 80, 0, 0.07) 48%, rgba(255, 80, 0, 0.07) 52%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .fire-alarm.active {
+            opacity: 1;
+            animation: fire-strobe 0.8s ease-in-out infinite
+        }
+
+        @keyframes fire-strobe {
+
+            0%,
+            100% {
+                background-color: rgba(255, 60, 0, 0.0)
+            }
+
+            50% {
+                background-color: rgba(255, 60, 0, 0.10)
+            }
+        }
+
+        .fire-badge {
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff4400, #ff9500);
+            color: #fff;
+            font-family: var(--mono);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 20px;
+            box-shadow: 0 0 24px rgba(255, 80, 0, 0.7);
+            letter-spacing: 1px;
+            z-index: 6;
+            animation: fire-badge-pulse 0.6s ease-in-out infinite;
+            display: none;
+        }
+
+        @keyframes fire-badge-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(255, 80, 0, 0.6);
+                transform: translateX(-50%) scale(1)
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(255, 160, 0, 0.9);
+                transform: translateX(-50%) scale(1.05)
+            }
+        }
+
+        /* ── STATS BAR ── */
+        .stats {
+            position: relative;
+            z-index: 10;
+            background: rgba(5, 5, 8, 0.97);
+            border-top: 1px solid var(--border);
+            padding: 0 24px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            flex-shrink: 0;
+            overflow: hidden
+        }
+
+        .st {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: var(--mono);
+            font-size: 0.62rem;
+            color: var(--muted)
+        }
+
+        .stv {
+            color: var(--text);
+            font-weight: 600
+        }
+
+        .sdivider {
+            width: 1px;
+            height: 14px;
+            background: var(--border2)
+        }
+
+        /* ── MODAL ── */
+        .modal-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.68);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s
+        }
+
+        .modal-bg.show {
+            opacity: 1;
+            pointer-events: all
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border2);
+            border-radius: 14px;
+            padding: 24px;
+            width: 310px;
+            transform: translateY(12px);
+            transition: transform 0.25s;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6)
+        }
+
+        .modal-bg.show .modal {
+            transform: none
+        }
+
+        .modal h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 14px;
+            letter-spacing: 1px
+        }
+
+        .lopt {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px;
+            border-radius: 8px;
+            border: 1px solid var(--border2);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--surface2)
+        }
+
+        .lopt:hover {
+            border-color: var(--v2);
+            background: rgba(108, 71, 255, 0.07)
+        }
+
+        .lopt.sel {
+            border-color: var(--cyan);
+            background: rgba(0, 212, 255, 0.07)
+        }
+
+        .lflag {
+            font-size: 1.4rem
+        }
+
+        .lname {
+            font-weight: 700;
+            font-size: 0.86rem
+        }
+
+        .lnat {
+            font-size: 0.68rem;
+            color: var(--muted2);
+            font-family: var(--mono)
+        }
+
+        .btn-close-modal {
+            width: 100%;
+            margin-top: 6px;
+            background: transparent;
+            border: 1px solid var(--border2);
+            color: var(--muted2);
+            border-radius: 8px;
+            padding: 9px;
+            font-family: var(--font);
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: all 0.2s
+        }
+
+        .btn-close-modal:hover {
+            border-color: var(--muted);
+            color: var(--text)
+        }
+
+        /* responsive */
+        @media(max-width:720px) {
+            main {
+                grid-template-columns: 1fr
+            }
+
+            .sidebar {
+                border-left: none;
+                border-top: 1px solid var(--border);
+                max-height: 42vh
+            }
+
+            .controls {
+                padding: 0 12px;
+                gap: 8px
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <div class="logo-eye">👁</div>
+            <div>
+                <div class="logo-text">EYSONIC <span style="color:var(--v2)">AI</span></div>
+                <div class="logo-sub">SMART VISION ASSISTIVE SYSTEM · v2.0</div>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="lang-badge" id="lang-badge" onclick="openModal()">🌐 ENG</div>
+            <div class="status-pill" id="spill">
+                <div class="sdot"></div><span id="stxt">OFFLINE</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <div class="ctrl">
+            <div class="ctrl-lbl">Mode</div>
+            <select id="sel-mode">
+                <option value="home">🏠 Home</option>
+                <option value="outdoor">🌳 Outdoor</option>
+                <option value="crowded">👥 Crowded</option>
+                <option value="travel">✈️ Travel</option>
+            </select>
+        </div>
+        <div class="cdiv"></div>
+        <div class="ctrl">
+            <div class="ctrl-lbl">AI Model</div>
+            <select id="sel-model">
+                <option value="yolov8n">Nano · Fast</option>
+                <option value="yolov8s" selected>Small · Balanced</option>
+                <option value="yolov8l">Large · Precise</option>
+            </select>
+        </div>
+        <div class="cdiv"></div>
+        <div class="ctrl">
+            <div class="ctrl-lbl">Voice</div>
+            <select id="sel-voice">
+                <option value="on">🔊 On</option>
+                <option value="off">🔇 Off</option>
+            </select>
+        </div>
+        <div class="cdiv"></div>
+        <div class="ctrl">
+            <div class="ctrl-lbl">Sensitivity</div>
+            <select id="sel-sens">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+            </select>
+        </div>
+        <button class="btn-start" id="btn-start" onclick="toggleSys()">
+            <div class="sicon"></div>
+            <span id="blbl">START SYSTEM</span>
+        </button>
+    </div>
+
+    <!-- MAIN -->
+    <main>
+        <!-- Camera -->
+        <div class="cam-wrap" id="cam-wrap">
+            <video id="video" autoplay playsinline muted></video>
+            <canvas id="canvas"></canvas>
+            <canvas id="overlay"></canvas>
+            <div class="scanline"></div>
+            <div class="hud-c hud-tl"></div>
+            <div class="hud-c hud-tr"></div>
+            <div class="hud-c hud-bl"></div>
+            <div class="hud-c hud-br"></div>
+            <div class="danger-flash" id="dflash"></div>
+            <div class="fire-alarm" id="fire-alarm"></div>
+            <div class="fire-badge" id="fire-badge">🔥 FIRE DETECTED — DANGER</div>
+            <div class="cam-idle" id="cam-idle">
+                <div class="idle-icon">📷</div>
+                <h2>CAMERA OFFLINE</h2>
+                <p>Press <strong>START SYSTEM</strong> to activate the AI vision feed</p>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="tabs">
+                <div class="tab active" onclick="goTab('objects')" id="tab-objects">📦 Objects<div class="tbadge"
+                        id="ob-badge"></div>
+                </div>
+                <div class="tab" onclick="goTab('faces')" id="tab-faces">👤 Faces<div class="tbadge" id="fc-badge">
+                    </div>
+                </div>
+                <div class="tab" onclick="goTab('train')" id="tab-train">➕ Train</div>
+            </div>
+
+            <!-- Objects -->
+            <div class="panel active" id="panel-objects">
+                <div class="empty-state" id="obj-empty"><i>🔍</i>
+                    <p>Start system to detect objects in real-time</p>
+                </div>
+            </div>
+
+            <!-- Faces -->
+            <div class="panel" id="panel-faces">
+                <div class="sec-head">Known People <span id="known-cnt"
+                        style="color:var(--v2);font-family:var(--mono)">0</span></div>
+                <div class="known-grid" id="known-grid">
+                    <p style="font-size:0.73rem;color:var(--muted)">No faces trained yet — go to ➕ Train tab.</p>
+                </div>
+                <div class="sec-head" style="margin-top:8px">Live Detections</div>
+                <div id="fc-live">
+                    <div class="empty-state" style="min-height:70px"><i>👁</i>
+                        <p>No faces detected</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Train -->
+            <div class="panel" id="panel-train">
+                <div class="train-scroll">
+                    <div>
+                        <label class="flabel">Person's Name</label>
+                        <input class="finput" id="tname" type="text" placeholder="e.g. Ayush, Sachin…"
+                            autocomplete="off" />
+                    </div>
+
+                    <!-- Camera preview -->
+                    <div class="tcam-box" id="tcam-box">
+                        <video id="train-vid" autoplay playsinline muted></video>
+                        <canvas id="snap-canvas"></canvas>
+                        <div class="tcam-idle" id="tcam-idle"><span>📷</span>
+                            <p>Open camera to capture face</p>
+                        </div>
+                        <div class="countdown-over" id="cdover">
+                            <div class="cd-num" id="cdnum">3</div>
+                        </div>
+                        <div class="snap-flash" id="snapflash"></div>
+                    </div>
+
+                    <!-- Captured preview -->
+                    <div class="cap-prev" id="cap-prev">
+                        <img id="cap-img" src="" alt="captured" />
+                        <div class="cap-prev-lbl">✅ CAPTURED — Ready to train</div>
+                    </div>
+
+                    <!-- Cam controls -->
+                    <div class="tcam-btns">
+                        <button class="btn-tc btn-open" id="btn-tcam" onclick="toggleTCam()">📷 Open Camera</button>
+                        <button class="btn-tc btn-snap" id="btn-snap" onclick="startCd()" disabled>📸 Snap (3s)</button>
+                    </div>
+
+                    <button class="btn-train" id="btn-train" onclick="submitTrain()" disabled>✅ &nbsp;Train This
+                        Face</button>
+                    <div class="tmsg" id="tmsg"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- STATS BAR -->
+    <div class="stats">
+        <div class="st">OBJECTS <span class="stv" id="st-obj">0</span></div>
+        <div class="sdivider"></div>
+        <div class="st">FACES <span class="stv" id="st-fc">0</span></div>
+        <div class="sdivider"></div>
+        <div class="st">FPS <span class="stv" id="st-fps">—</span></div>
+        <div class="sdivider"></div>
+        <div class="st">MODEL <span class="stv" id="st-mdl">—</span></div>
+        <div class="sdivider"></div>
+        <div class="st">LANG <span class="stv" id="st-lng">EN</span></div>
+        <div class="sdivider"></div>
+        <div class="st">FIRE <span class="stv" id="st-fire" style="color:var(--muted)">OFF</span></div>
+        <div class="sdivider"></div>
+        <div class="st" id="danger-row" style="display:none"><span
+                style="color:var(--red);font-weight:700;animation:blink 0.8s infinite">⚠ DANGER ZONE ACTIVE</span></div>
+    </div>
+
+    <!-- LANGUAGE MODAL -->
+    <div class="modal-bg" id="lmodal">
+        <div class="modal">
+            <h3>🌐 SELECT LANGUAGE / भाषा</h3>
+            <div class="lopt sel" id="lopt-en" onclick="setLang('en')">
+                <div class="lflag">🇬🇧</div>
+                <div>
+                    <div class="lname">English</div>
+                    <div class="lnat">Default system language</div>
+                </div>
+            </div>
+            <div class="lopt" id="lopt-hi" onclick="setLang('hi')">
+                <div class="lflag">🇮🇳</div>
+                <div>
+                    <div class="lname">हिन्दी</div>
+                    <div class="lnat">Hindi · भारतीय भाषा</div>
+                </div>
+            </div>
+            <button class="btn-close-modal" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ═══ STATE ═══
+        let mainStream = null, trainStream = null;
+        let isRunning = false, animId = null;
+        let frameIdx = 0, fpsCnt = 0, lastFpsT = Date.now();
+        let busy = false, capturedB64 = null, trainCamOn = false;
+        let currentLang = 'en', cdTimer = null;
+        const spoken = {}, COOL = 4000;
+
+        // ═══ LANGUAGE ═══
+        function setLang(c) {
+            currentLang = c;
+            document.getElementById('lang-badge').textContent = c === 'hi' ? '🇮🇳 HIN' : '🌐 ENG';
+            document.getElementById('st-lng').textContent = c.toUpperCase();
+            document.querySelectorAll('.lopt').forEach(e => e.classList.remove('sel'));
+            document.getElementById('lopt-' + c).classList.add('sel');
+            cfgVoice(); closeModal();
+        }
+        function openModal() { document.getElementById('lmodal').classList.add('show') }
+        function closeModal() { document.getElementById('lmodal').classList.remove('show') }
+        document.getElementById('lmodal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal() });
+
+        // ═══ SPEECH ═══
+        let sVoice = null;
+        function cfgVoice() { const vs = speechSynthesis.getVoices(), c = currentLang === 'hi' ? 'hi' : 'en'; sVoice = vs.find(v => v.lang.startsWith(c)) || null }
+        speechSynthesis.onvoiceschanged = cfgVoice;
+        window.addEventListener('load', cfgVoice);
+        function speak(t) {
+            if (document.getElementById('sel-voice').value === 'off' || !t?.trim()) return;
+            const n = Date.now(); if (spoken[t] && n - spoken[t] < COOL) return;
+            spoken[t] = n;
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
+            if (sVoice) u.voice = sVoice; u.rate = 1.05;
+            speechSynthesis.cancel(); speechSynthesis.speak(u);
+        }
+        function atxt(d) { return `${d.label_translated || d.label}, ${d.direction_translated || d.direction}, ${d.distance_translated || d.distance}` }
+
+        // ═══ SYSTEM TOGGLE ═══
+        async function toggleSys() { isRunning ? stopSys() : await startSys() }
+        async function startSys() {
+            try {
+                mainStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'environment' }, audio: false });
+                const v = document.getElementById('video'); v.srcObject = mainStream; await v.play();
+                document.getElementById('cam-idle').classList.add('hidden');
+                document.getElementById('cam-wrap').classList.add('live');
+                document.getElementById('btn-start').classList.add('running');
+                document.getElementById('blbl').textContent = 'STOP SYSTEM';
+                document.getElementById('spill').classList.add('live');
+                document.getElementById('stxt').textContent = 'LIVE';
+                document.getElementById('st-mdl').textContent = document.getElementById('sel-model').value.replace('yolov8', 'v8').toUpperCase();
+                isRunning = true; stopDemoAnimation(); loop();
+            } catch (e) { alert('Camera error: ' + e.message) }
+        }
+        function stopSys() {
+            isRunning = false; if (animId) cancelAnimationFrame(animId);
+            if (mainStream) mainStream.getTracks().forEach(t => t.stop()); mainStream = null;
+            document.getElementById('cam-idle').classList.remove('hidden');
+            document.getElementById('cam-wrap').classList.remove('live');
+            document.getElementById('btn-start').classList.remove('running');
+            document.getElementById('blbl').textContent = 'START SYSTEM';
+            document.getElementById('spill').classList.remove('live');
+            document.getElementById('stxt').textContent = 'OFFLINE';
+            document.getElementById('danger-row').style.display = 'none';
+            // Reset fire UI
+            document.getElementById('fire-alarm').classList.remove('active');
+            document.getElementById('fire-badge').style.display = 'none';
+            document.getElementById('st-fire').textContent = 'OFF';
+            document.getElementById('st-fire').style.color = 'var(--muted)';
+            setTimeout(startDemoAnimation, 300);
+        }
+
+        // ═══ CACHED DETECTIONS — boxes persist across frames ═══
+        let lastDetections = { audio_detections: [], face_detections: [], has_face_danger: false };
+        let serverW = 640, serverH = 480; // resolution we send to server
+
+        // Map a coord from server-space (640x480) into display canvas space
+        // The display canvas draws video STRETCHED to fill (no letterbox)
+        // so the mapping is simply proportional
+        function mapX(x, dispW) { return x * dispW / serverW; }
+        function mapY(y, dispH) { return y * dispH / serverH; }
+        function mapBox(box, dispW, dispH) {
+            return [mapX(box[0], dispW), mapY(box[1], dispH), mapX(box[2], dispW), mapY(box[3], dispH)];
+        }
+
+        // ═══ LOOP — video to #canvas, boxes to #overlay every frame ═══
+        async function loop() {
+            if (!isRunning) return;
+
+            const vid = document.getElementById('video');
+            const vidCvs = document.getElementById('canvas');
+            const overCvs = document.getElementById('overlay');
+            const vCtx = vidCvs.getContext('2d');
+            const oCtx = overCvs.getContext('2d');
+
+            // Match both canvases to the visible container size (no black bars)
+            const wrap = document.getElementById('cam-wrap');
+            const dW = wrap.clientWidth, dH = wrap.clientHeight;
+            if (vidCvs.width !== dW || vidCvs.height !== dH) {
+                vidCvs.width = dW; vidCvs.height = dH;
+                overCvs.width = dW; overCvs.height = dH;
+            }
+
+            // Draw video STRETCHED to fill — no pillarbox, no letterbox
+            vCtx.drawImage(vid, 0, 0, dW, dH);
+
+            // FPS counter
+            fpsCnt++; const now = Date.now();
+            if (now - lastFpsT >= 1000) { document.getElementById('st-fps').textContent = fpsCnt; fpsCnt = 0; lastFpsT = now }
+
+            // Every 3rd frame → send to server for detection
+            frameIdx++;
+            if (!busy && frameIdx % 3 === 0) {
+                busy = true;
+                // Capture from video canvas BEFORE drawing overlay
+                // Downsample for server into fixed 640x480
+                const thumb = document.createElement('canvas');
+                thumb.width = serverW; thumb.height = serverH;
+                thumb.getContext('2d').drawImage(vid, 0, 0, serverW, serverH);
+                sendFrame(thumb.toDataURL('image/jpeg', 0.75));
+            }
+
+            // Redraw overlay every frame — boxes mapped from server coords to display coords
+            marchOffset = (marchOffset + 0.8) % 30;
+            oCtx.clearRect(0, 0, dW, dH);
+            for (const det of (lastDetections.audio_detections || [])) {
+                if (det.is_fire) continue; // drawn separately below
+                drawObjectBox(oCtx, det, dW, dH);
+            }
+            for (const face of (lastDetections.face_detections || [])) {
+                drawFaceBox(oCtx, face, dW, dH);
+            }
+            for (const fire of (lastDetections.fire_detections || [])) {
+                drawFireBox(oCtx, fire, dW, dH);
+            }
+
+            animId = requestAnimationFrame(loop);
+        }
+
+        async function sendFrame(b64) {
+            try {
+                const r = await fetch('/detect', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        image: b64, mode: document.getElementById('sel-mode').value,
+                        model: document.getElementById('sel-model').value, lang: currentLang,
+                        sensitivity: document.getElementById('sel-sens').value
+                    })
+                });
+                busy = false;
+                if (!r.ok) return;
+                const d = await r.json();
+                lastDetections = d;          // ← cache for overlay redraws
+                handleFireAlert(d);
+                updatePanels(d); doAudio(d);
+                if (d.has_face_danger) flashDanger();
+            } catch (_) { busy = false }
+        }
+
+        // ═══ CLASS → COLOR MAP ═══
+        const CLASS_COLORS = {
+            // People
+            person: '#00d4ff',
+            // Vehicles — amber/orange
+            car: '#ff9f0a', motorcycle: '#ff9f0a', bicycle: '#ff9f0a',
+            bus: '#ffcc00', truck: '#ffcc00', train: '#ffcc00', airplane: '#ffcc00', boat: '#ffcc00',
+            // Animals — lime
+            dog: '#a3e635', cat: '#a3e635', bird: '#a3e635', horse: '#a3e635',
+            cow: '#a3e635', elephant: '#a3e635', bear: '#a3e635', zebra: '#a3e635', giraffe: '#a3e635',
+            // Traffic / outdoor — violet
+            'traffic light': '#c084fc', 'stop sign': '#c084fc', 'fire hydrant': '#c084fc',
+            // Furniture / home — teal
+            chair: '#2dd4bf', couch: '#2dd4bf', bed: '#2dd4bf', 'dining table': '#2dd4bf',
+            // Electronics — blue
+            tv: '#60a5fa', laptop: '#60a5fa', 'cell phone': '#60a5fa', remote: '#60a5fa', keyboard: '#60a5fa',
+            // Food — pink
+            bottle: '#f472b6', cup: '#f472b6', bowl: '#f472b6',
+            banana: '#fbbf24', apple: '#fbbf24', pizza: '#fbbf24', cake: '#fbbf24',
+            // Bags
+            backpack: '#fb923c', handbag: '#fb923c', suitcase: '#fb923c', umbrella: '#fb923c',
+            // Default
+            // Fire
+            fire: '#ff6a00', smoke: '#aaaaaa', flame: '#ff4400',
+            _default: '#00d4ff'
+        };
+
+        // Class → emoji icon
+        const CLASS_ICONS = {
+            person: '👤', car: '🚗', motorcycle: '🏍', bicycle: '🚲', bus: '🚌', truck: '🚛',
+            train: '🚆', airplane: '✈', boat: '⛵', 'traffic light': '🚦', 'stop sign': '🛑',
+            dog: '🐕', cat: '🐈', bird: '🐦', horse: '🐴', cow: '🐄', elephant: '🐘',
+            bear: '🐻', chair: '🪑', couch: '🛋', bed: '🛏', tv: '📺', laptop: '💻',
+            'cell phone': '📱', bottle: '🍶', cup: '☕', backpack: '🎒', suitcase: '🧳',
+            umbrella: '☂', pizza: '🍕', cake: '🎂', banana: '🍌', apple: '🍎',
+            fire: '🔥', smoke: '💨', flame: '🔥',
+            _default: '📦'
+        };
+
+        function getClassColor(label, danger) {
+            if (danger) return '#ff3b5c';
+            const raw = label.toLowerCase();
+            return CLASS_COLORS[raw] || CLASS_COLORS._default;
+        }
+        function getClassIcon(label) {
+            const raw = label.toLowerCase();
+            return CLASS_ICONS[raw] || CLASS_ICONS._default;
+        }
+
+        // ═══ MARCH OFFSET for animated borders ═══
+        let marchOffset = 0;
+
+        // ═══ DEMO MODE — animated sample boxes shown on idle screen ═══
+        let demoAnimId = null;
+        const DEMO_BOXES = [
+            { label: 'person', label_translated: 'Person', direction: 'straight ahead', direction_translated: 'straight ahead', distance: 'near', distance_text: '1.2m', box: [120, 80, 260, 380], confidence: 0.92, danger: false },
+            { label: 'chair', label_translated: 'Chair', direction: 'on your left', direction_translated: 'on your left', distance: 'very close', distance_text: '0.6m', box: [20, 220, 110, 370], confidence: 0.88, danger: true },
+            { label: 'car', label_translated: 'Car', direction: 'on your right', direction_translated: 'on your right', distance: 'far', distance_text: '4.1m', box: [310, 160, 490, 310], confidence: 0.95, danger: false },
+            { label: 'cell phone', label_translated: 'Phone', direction: 'straight ahead', direction_translated: 'straight ahead', distance: 'near', distance_text: '0.9m', box: [175, 290, 240, 370], confidence: 0.78, danger: false },
+        ];
+
+        function startDemoAnimation() {
+            const overCvs = document.getElementById('overlay');
+            const wrap = document.getElementById('cam-wrap');
+            function demoFrame() {
+                if (isRunning) { overCvs.getContext('2d').clearRect(0, 0, overCvs.width, overCvs.height); return }
+                const dW = wrap.clientWidth || 640, dH = wrap.clientHeight || 480;
+                if (overCvs.width !== dW || overCvs.height !== dH) { overCvs.width = dW; overCvs.height = dH; }
+                marchOffset = (marchOffset + 0.6) % 30;
+                const ctx = overCvs.getContext('2d');
+                ctx.clearRect(0, 0, dW, dH);
+                ctx.save();
+                ctx.globalAlpha = 0.15;
+                ctx.font = "600 12px 'JetBrains Mono',monospace";
+                ctx.fillStyle = '#7a7aa8';
+                ctx.textAlign = 'center';
+                ctx.fillText('DEMO PREVIEW — Start system for live detection', dW / 2, dH - 14);
+                ctx.textAlign = 'left';
+                ctx.restore();
+                for (const det of DEMO_BOXES) drawObjectBox(ctx, det, dW, dH);
+                demoAnimId = requestAnimationFrame(demoFrame);
+            }
+            demoFrame();
+        }
+        function stopDemoAnimation() {
+            if (demoAnimId) cancelAnimationFrame(demoAnimId); demoAnimId = null;
+            const overCvs = document.getElementById('overlay');
+            overCvs.getContext('2d').clearRect(0, 0, overCvs.width, overCvs.height);
+        }
+
+        // ═══ DRAW DISPATCHER ═══
+        function draw(ctx, w, h, data) {
+            marchOffset = (marchOffset + 0.8) % 30;
+            ctx.clearRect(0, 0, w, h);
+            const allObjs = data.audio_detections || [];
+            for (const det of allObjs) drawObjectBox(ctx, det, w, h);
+            for (const face of (data.face_detections || [])) drawFaceBox(ctx, face, w, h);
+        }
+
+        // ═══ OBJECT BOX ═══
+        function drawObjectBox(ctx, det, w, h) {
+            const [mx1, my1, mx2, my2] = mapBox(det.box, w, h);
+            const x1 = mx1, y1 = my1, x2 = mx2, y2 = my2;
+            const bw = x2 - x1, bh = y2 - y1;
+            if (bw < 4 || bh < 4) return;
+            const danger = det.danger;
+            const rawLabel = (det.label || '').toLowerCase();
+            const col = getClassColor(rawLabel, danger);
+            const icon = getClassIcon(rawLabel);
+            const conf = Math.round((det.confidence || 0) * 100);
+            const lbl = det.label_translated || det.label || 'object';
+            const dist = det.distance_text || '';
+            const dir = det.direction || '';
+            const t = Date.now();
+
+            ctx.save();
+
+            // ── 1. Gradient fill ──────────────────────────────────────
+            const grd = ctx.createLinearGradient(x1, y1, x1, y2);
+            grd.addColorStop(0, hexToRgba(col, danger ? 0.18 : 0.10));
+            grd.addColorStop(1, hexToRgba(col, danger ? 0.06 : 0.02));
+            ctx.fillStyle = grd;
+            ctx.fillRect(x1, y1, bw, bh);
+
+            // ── 2. Marching-ants animated border ─────────────────────
+            ctx.strokeStyle = hexToRgba(col, 0.55);
+            ctx.lineWidth = danger ? 1.5 : 1;
+            ctx.setLineDash([6, 5]);
+            ctx.lineDashOffset = -marchOffset;
+            ctx.strokeRect(x1 + 1, y1 + 1, bw - 2, bh - 2);
+            ctx.setLineDash([]);
+
+            // ── 3. Solid outer glow border ───────────────────────────
+            ctx.strokeStyle = col;
+            ctx.lineWidth = danger ? 2 : 1.5;
+            ctx.shadowColor = col;
+            ctx.shadowBlur = danger ? 22 : 12;
+            ctx.strokeRect(x1, y1, bw, bh);
+            ctx.shadowBlur = 0;
+
+            // ── 4. Corner L-brackets (big, bold) ─────────────────────
+            const cs = Math.min(24, bw * 0.28, bh * 0.28);
+            ctx.lineWidth = danger ? 4 : 3;
+            ctx.strokeStyle = col;
+            ctx.shadowColor = col; ctx.shadowBlur = danger ? 20 : 14;
+            ctx.lineCap = 'square';
+            [[x1, y1, 1, 1], [x2, y1, -1, 1], [x1, y2, 1, -1], [x2, y2, -1, -1]].forEach(([cx, cy, sx, sy]) => {
+                ctx.beginPath();
+                ctx.moveTo(cx + sx * cs, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + sy * cs);
+                ctx.stroke();
+            });
+            ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+
+            // ── 5. Corner dots ────────────────────────────────────────
+            ctx.fillStyle = col;
+            ctx.shadowColor = col; ctx.shadowBlur = 8;
+            [[x1, y1], [x2, y1], [x1, y2], [x2, y2]].forEach(([cx, cy]) => {
+                ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+            });
+            ctx.shadowBlur = 0;
+
+            // ── 6. Danger pulsing outer ring ─────────────────────────
+            if (danger) {
+                const pulse = 0.5 + 0.5 * Math.sin(t * 0.006);
+                ctx.strokeStyle = hexToRgba('#ff3b5c', 0.28 + 0.32 * pulse);
+                ctx.lineWidth = 5 + 4 * pulse;
+                ctx.shadowColor = '#ff3b5c'; ctx.shadowBlur = 24 * pulse;
+                ctx.strokeRect(x1 - 4, y1 - 4, bw + 8, bh + 8);
+                ctx.shadowBlur = 0;
+            }
+
+            // ── 7. Internal scan-line sweep ──────────────────────────
+            const sweep = ((t * 0.05) % bh);
+            const scanGrd = ctx.createLinearGradient(x1, y1 + sweep - 10, x1, y1 + sweep + 4);
+            scanGrd.addColorStop(0, 'transparent');
+            scanGrd.addColorStop(0.5, hexToRgba(col, 0.18));
+            scanGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = scanGrd;
+            ctx.fillRect(x1, y1, bw, bh);
+
+            // ── 8. Confidence arc (top-right corner) ─────────────────
+            const arcR = 16, arcCx = x2 - arcR - 4, arcCy = y1 + arcR + 4;
+            if (bw > 60 && bh > 60) {
+                ctx.strokeStyle = hexToRgba(col, 0.25);
+                ctx.lineWidth = 3; ctx.beginPath();
+                ctx.arc(arcCx, arcCy, arcR, -Math.PI / 2, Math.PI * 2 * 1 - Math.PI / 2);
+                ctx.stroke();
+                ctx.strokeStyle = col; ctx.lineWidth = 3;
+                ctx.shadowColor = col; ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(arcCx, arcCy, arcR, -Math.PI / 2, (Math.PI * 2 * (conf / 100)) - Math.PI / 2);
+                ctx.stroke(); ctx.shadowBlur = 0;
+                ctx.font = `700 8px 'JetBrains Mono',monospace`;
+                ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+                ctx.fillText(`${conf}`, arcCx, arcCy + 3);
+                ctx.textAlign = 'left';
+            }
+
+            // ── 9. Direction arrow strip (bottom edge) ───────────────
+            if (bw > 80) {
+                const stripY = y2 - 18, stripH = 18;
+                ctx.fillStyle = hexToRgba('#000', 0.55);
+                ctx.fillRect(x1, stripY, bw, stripH);
+                ctx.fillStyle = hexToRgba(col, 0.9);
+                const arrowTxt = dir.includes('left') ? '◄ LEFT' : dir.includes('right') ? 'RIGHT ►' : '▲ AHEAD';
+                ctx.font = `600 9px 'JetBrains Mono',monospace`;
+                ctx.textAlign = 'center';
+                ctx.shadowColor = col; ctx.shadowBlur = 4;
+                ctx.fillText(arrowTxt, (x1 + x2) / 2, stripY + 12);
+                ctx.shadowBlur = 0; ctx.textAlign = 'left';
+            }
+
+            // ── 10. Label pill (above box, or inside if no room) ─────
+            const fsBig = Math.max(11, Math.min(14, bw / 7));
+            const fsSmall = fsBig - 2;
+            ctx.font = `800 ${fsBig}px 'Syne',sans-serif`;
+            const mainTxt = `${icon} ${lbl.toUpperCase()}`;
+            const mainW = ctx.measureText(mainTxt).width;
+            ctx.font = `500 ${fsSmall}px 'JetBrains Mono',monospace`;
+            const subTxt = dist;
+            const subW = ctx.measureText(subTxt).width;
+            const pillW = Math.max(mainW, subW) + 22;
+            const pillH = 38;
+            const pillX = Math.min(x1, w - pillW - 2);
+            const pillAbove = y1 - pillH - 3;
+            const pillY = pillAbove < 0 ? y1 + 2 : pillAbove;
+            const insidePill = pillAbove < 0;
+
+            // pill bg
+            ctx.fillStyle = hexToRgba('#04040a', 0.92);
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(pillX, pillY, pillW, pillH, 6); ctx.fill(); }
+            else { ctx.fillRect(pillX, pillY, pillW, pillH); }
+
+            // colored left stripe
+            ctx.fillStyle = col;
+            ctx.fillRect(pillX, pillY, 4, pillH);
+
+            // top glow bar
+            const topGrd = ctx.createLinearGradient(pillX + 4, pillY, pillX + pillW, pillY);
+            topGrd.addColorStop(0, hexToRgba(col, 0.7));
+            topGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = topGrd;
+            ctx.fillRect(pillX + 4, pillY, pillW - 4, 2);
+
+            // bottom glow bar
+            const botGrd = ctx.createLinearGradient(pillX + 4, pillY + pillH, pillX + pillW, pillY + pillH);
+            botGrd.addColorStop(0, hexToRgba(col, 0.25));
+            botGrd.addColorStop(1, 'transparent');
+            ctx.fillStyle = botGrd;
+            ctx.fillRect(pillX + 4, pillY + pillH - 1.5, pillW - 4, 1.5);
+
+            // label
+            ctx.font = `800 ${fsBig}px 'Syne',sans-serif`;
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = col; ctx.shadowBlur = 8;
+            ctx.fillText(mainTxt, pillX + 12, pillY + 15);
+            ctx.shadowBlur = 0;
+
+            // dist sub-text
+            if (subTxt) {
+                ctx.font = `500 ${fsSmall}px 'JetBrains Mono',monospace`;
+                ctx.fillStyle = danger ? '#ff8099' : col;
+                ctx.fillText(subTxt, pillX + 12, pillY + 30);
+            }
+
+            ctx.restore();
+        }
+
+        // ═══ FACE BOX ═══
+        function drawFaceBox(ctx, face, w, h) {
+            const [fx1, fy1, fx2, fy2] = mapBox(face.box, w, h);
+            const fw = fx2 - fx1, fh = fy2 - fy1;
+            if (fw < 4 || fh < 4) return;
+            const col = face.is_danger ? '#ff3b5c' : face.is_known ? '#00e87a' : '#9898c8';
+            const nm = face.name_display || face.name;
+            const conf = face.is_known ? Math.round((face.confidence || 0) * 100) : 0;
+            const t = Date.now();
+            const cx = fx1 + fw / 2, cy = fy1 + fh / 2;
+
+            ctx.save();
+
+            // ── 1. Fill ───────────────────────────────────────────────
+            ctx.fillStyle = hexToRgba(col, face.is_danger ? 0.12 : 0.07);
+            ctx.fillRect(fx1, fy1, fw, fh);
+
+            // ── 2. Outer glow ellipse ─────────────────────────────────
+            ctx.strokeStyle = col;
+            ctx.lineWidth = face.is_danger ? 3 : 2.5;
+            ctx.shadowColor = col; ctx.shadowBlur = face.is_danger ? 24 : 16;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, fw / 2 + 4, fh / 2 + 4, 0, 0, Math.PI * 2);
+            ctx.stroke(); ctx.shadowBlur = 0;
+
+            // ── 3. Inner ellipse (dashed) ────────────────────────────
+            ctx.strokeStyle = hexToRgba(col, 0.4);
+            ctx.lineWidth = 1; ctx.setLineDash([5, 6]); ctx.lineDashOffset = -marchOffset * 0.7;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, fw / 2 + 12, fh / 2 + 12, 0, 0, Math.PI * 2);
+            ctx.stroke(); ctx.setLineDash([]);
+
+            // ── 4. Corner brackets ───────────────────────────────────
+            const cs = Math.min(20, fw * 0.22);
+            ctx.lineWidth = face.is_danger ? 3.5 : 3;
+            ctx.strokeStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 14;
+            ctx.lineCap = 'square';
+            [[fx1, fy1, 1, 1], [fx2, fy1, -1, 1], [fx1, fy2, 1, -1], [fx2, fy2, -1, -1]].forEach(([px, py, sx, sy]) => {
+                ctx.beginPath(); ctx.moveTo(px + sx * cs, py); ctx.lineTo(px, py); ctx.lineTo(px, py + sy * cs); ctx.stroke();
+            });
+            ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+
+            // ── 5. Corner dots ────────────────────────────────────────
+            ctx.fillStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 8;
+            [[fx1, fy1], [fx2, fy1], [fx1, fy2], [fx2, fy2]].forEach(([px, py]) => {
+                ctx.beginPath(); ctx.arc(px, py, 3.5, 0, Math.PI * 2); ctx.fill();
+            }); ctx.shadowBlur = 0;
+
+            // ── 6. Danger pulse ──────────────────────────────────────
+            if (face.is_danger) {
+                const p = 0.5 + 0.5 * Math.sin(t * 0.008);
+                ctx.strokeStyle = hexToRgba('#ff3b5c', 0.2 + 0.4 * p);
+                ctx.lineWidth = 4 + 5 * p; ctx.shadowColor = '#ff3b5c'; ctx.shadowBlur = 26 * p;
+                ctx.beginPath();
+                ctx.ellipse(cx, cy, fw / 2 + 14 + 6 * p, fh / 2 + 14 + 6 * p, 0, 0, Math.PI * 2);
+                ctx.stroke(); ctx.shadowBlur = 0;
+            }
+
+            // ── 7. Known person confidence arc ───────────────────────
+            if (face.is_known && fw > 50) {
+                const ar = 14;
+                ctx.strokeStyle = hexToRgba(col, 0.2);
+                ctx.lineWidth = 2.5; ctx.beginPath();
+                ctx.arc(cx, fy1 + ar + 6, ar, -Math.PI / 2, Math.PI * 2 - Math.PI / 2); ctx.stroke();
+                ctx.strokeStyle = col; ctx.shadowColor = col; ctx.shadowBlur = 7;
+                ctx.beginPath();
+                ctx.arc(cx, fy1 + ar + 6, ar, -Math.PI / 2, Math.PI * 2 * (conf / 100) - Math.PI / 2); ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+
+            // ── 8. Cross-hair center dot ─────────────────────────────
+            ctx.strokeStyle = hexToRgba(col, 0.5); ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(cx - 8, cy); ctx.lineTo(cx + 8, cy); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx, cy - 8); ctx.lineTo(cx, cy + 8); ctx.stroke();
+            ctx.fillStyle = col; ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2); ctx.fill();
+
+            // ── 9. Label pill ────────────────────────────────────────
+            const icon = face.is_danger ? '⚠' : face.is_known ? '✓' : '?';
+            const mainTxt = `${icon} ${nm.toUpperCase()}`;
+            ctx.font = `800 12px 'Syne',sans-serif`;
+            const mw = ctx.measureText(mainTxt).width;
+            const subTxt = `${conf ? conf + '% · ' : ''}${face.distance_text}`;
+            ctx.font = `500 10px 'JetBrains Mono',monospace`;
+            const sw = ctx.measureText(subTxt).width;
+            const pW = Math.max(mw, sw) + 20, pH = 38;
+            const pX = Math.min(fx1, w - pW - 2), pAbove = fy1 - pH - 3;
+            const pY = pAbove < 0 ? fy1 + 2 : pAbove;
+
+            ctx.fillStyle = hexToRgba('#04040a', 0.92);
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(pX, pY, pW, pH, 6); ctx.fill(); }
+            else ctx.fillRect(pX, pY, pW, pH);
+
+            ctx.fillStyle = col; ctx.fillRect(pX, pY, 4, pH);
+            const tg = ctx.createLinearGradient(pX + 4, pY, pX + pW, pY);
+            tg.addColorStop(0, hexToRgba(col, 0.7)); tg.addColorStop(1, 'transparent');
+            ctx.fillStyle = tg; ctx.fillRect(pX + 4, pY, pW - 4, 2);
+
+            ctx.font = `800 12px 'Syne',sans-serif`;
+            ctx.fillStyle = '#fff'; ctx.shadowColor = col; ctx.shadowBlur = 7;
+            ctx.fillText(mainTxt, pX + 12, pY + 15); ctx.shadowBlur = 0;
+            if (subTxt) {
+                ctx.font = `500 10px 'JetBrains Mono',monospace`;
+                ctx.fillStyle = col; ctx.fillText(subTxt, pX + 12, pY + 30);
+            }
+
+            ctx.restore();
+        }
+
+
+        // ═══ FIRE BOX — special renderer with animated flame effect ═══
+        function drawFireBox(ctx, det, w, h) {
+            const [x1, y1, x2, y2] = mapBox(det.box, w, h);
+            const bw = x2 - x1, bh = y2 - y1;
+            if (bw < 4 || bh < 4) return;
+
+            const t = Date.now();
+            const flicker1 = 0.5 + 0.5 * Math.sin(t * 0.012);
+            const flicker2 = 0.5 + 0.5 * Math.sin(t * 0.019 + 1.2);
+
+            ctx.save();
+
+            // ── Gradient fill: fire glow ──────────────────────────────
+            const grd = ctx.createRadialGradient(
+                (x1 + x2) / 2, (y1 + y2) / 2, 0,
+                (x1 + x2) / 2, (y1 + y2) / 2, Math.max(bw, bh) / 1.5
+            );
+            grd.addColorStop(0, `rgba(255,${140 + 60 * flicker1},0,${0.22 + 0.1 * flicker1})`);
+            grd.addColorStop(0.5, `rgba(255,60,0,${0.12 + 0.06 * flicker2})`);
+            grd.addColorStop(1, 'transparent');
+            ctx.fillStyle = grd;
+            ctx.fillRect(x1 - 10, y1 - 10, bw + 20, bh + 20);
+
+            // ── Outer pulsing ring ───────────────────────────────────
+            ctx.strokeStyle = `rgba(255,${80 + 100 * flicker1},0,${0.5 + 0.4 * flicker1})`;
+            ctx.lineWidth = 3 + 3 * flicker2;
+            ctx.shadowColor = '#ff6a00';
+            ctx.shadowBlur = 28 + 20 * flicker1;
+            ctx.strokeRect(x1 - 2, y1 - 2, bw + 4, bh + 4);
+            ctx.shadowBlur = 0;
+
+            // ── Solid corner brackets ────────────────────────────────
+            const cs = Math.min(22, bw * 0.3, bh * 0.3);
+            ctx.lineWidth = 4; ctx.strokeStyle = '#ff9500';
+            ctx.shadowColor = '#ffcc00'; ctx.shadowBlur = 16;
+            ctx.lineCap = 'square';
+            [[x1, y1, 1, 1], [x2, y1, -1, 1], [x1, y2, 1, -1], [x2, y2, -1, -1]].forEach(([cx, cy, sx, sy]) => {
+                ctx.beginPath();
+                ctx.moveTo(cx + sx * cs, cy); ctx.lineTo(cx, cy); ctx.lineTo(cx, cy + sy * cs);
+                ctx.stroke();
+            });
+            ctx.shadowBlur = 0; ctx.lineCap = 'butt';
+
+            // ── Corner dots ──────────────────────────────────────────
+            [[x1, y1], [x2, y1], [x1, y2], [x2, y2]].forEach(([px, py]) => {
+                ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffcc00'; ctx.shadowColor = '#ff9500'; ctx.shadowBlur = 10;
+                ctx.fill(); ctx.shadowBlur = 0;
+            });
+
+            // ── Animated flame particles (small upward streaks) ──────
+            ctx.globalAlpha = 0.5 + 0.3 * flicker1;
+            for (let i = 0; i < 5; i++) {
+                const px = x1 + (i + 0.5) * (bw / 5) + (Math.sin(t * 0.007 + i * 1.3) * 6);
+                const py = y1 - 8 - i * 3 * flicker2;
+                const ph = 10 + i * 4 + 6 * flicker2;
+                ctx.strokeStyle = `rgba(255,${100 + i * 25 + 40 * flicker1},0,0.8)`;
+                ctx.lineWidth = 2 + flicker1;
+                ctx.beginPath();
+                ctx.moveTo(px, y1);
+                ctx.bezierCurveTo(px - 4, py + ph * 0.4, px + 4, py + ph * 0.2, px, py);
+                ctx.stroke();
+            }
+            ctx.globalAlpha = 1;
+
+            // ── Label pill ───────────────────────────────────────────
+            const lbl = (det.label_translated || det.label || 'fire').toUpperCase();
+            const conf = Math.round((det.confidence || 0) * 100);
+            const src = det.sub_label || '';
+            const mainTxt = `🔥 ${lbl}`;
+            const subTxt = `${conf}% · ${src} · ${det.distance_text || ''}`;
+
+            ctx.font = `800 13px 'Syne',sans-serif`;
+            const mw = ctx.measureText(mainTxt).width;
+            ctx.font = `500 10px 'JetBrains Mono',monospace`;
+            const sw = ctx.measureText(subTxt).width;
+            const pW = Math.max(mw, sw) + 22, pH = 38;
+            const pX = Math.min(x1, w - pW - 2);
+            const pAbove = y1 - pH - 4;
+            const pY = pAbove < 0 ? y1 + 2 : pAbove;
+
+            ctx.fillStyle = 'rgba(20,5,0,0.92)';
+            if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(pX, pY, pW, pH, 6); ctx.fill(); }
+            else ctx.fillRect(pX, pY, pW, pH);
+
+            // orange left bar
+            const barGrd = ctx.createLinearGradient(pX, pY, pX, pY + pH);
+            barGrd.addColorStop(0, '#ffcc00'); barGrd.addColorStop(1, '#ff4400');
+            ctx.fillStyle = barGrd; ctx.fillRect(pX, pY, 4, pH);
+
+            // top glow
+            const tg = ctx.createLinearGradient(pX + 4, pY, pX + pW, pY);
+            tg.addColorStop(0, 'rgba(255,140,0,0.8)'); tg.addColorStop(1, 'transparent');
+            ctx.fillStyle = tg; ctx.fillRect(pX + 4, pY, pW - 4, 2);
+
+            ctx.font = `800 13px 'Syne',sans-serif`;
+            ctx.fillStyle = '#fff'; ctx.shadowColor = '#ff6a00'; ctx.shadowBlur = 8;
+            ctx.fillText(mainTxt, pX + 12, pY + 15); ctx.shadowBlur = 0;
+
+            ctx.font = `500 10px 'JetBrains Mono',monospace`;
+            ctx.fillStyle = '#ff9d4d';
+            ctx.fillText(subTxt, pX + 12, pY + 30);
+
+            ctx.restore();
+        }
+
+        // Helper: hex color → rgba string
+        function hexToRgba(hex, alpha) {
+            const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
+        function flashDanger() {
+            const el = document.getElementById('dflash');
+            el.classList.remove('pop'); el.offsetHeight; el.classList.add('pop');
+        }
+
+        // ═══ PANELS ═══
+        function updatePanels(data) {
+            const objs = data.audio_detections || [], faces = data.face_detections || [];
+            document.getElementById('st-obj').textContent = objs.length;
+            document.getElementById('st-fc').textContent = faces.length;
+            document.getElementById('danger-row').style.display = data.has_face_danger ? 'flex' : 'none';
+            const ob = document.getElementById('ob-badge'), fb = document.getElementById('fc-badge');
+            objs.length > 0 ? (ob.textContent = objs.length, ob.classList.add('show')) : ob.classList.remove('show');
+            faces.length > 0 ? (fb.textContent = faces.length, fb.classList.add('show')) : fb.classList.remove('show');
+
+            // Objects
+            const op = document.getElementById('panel-objects'), oe = document.getElementById('obj-empty');
+            if (objs.length === 0) { oe.style.display = 'flex'; while (op.children.length > 1) op.removeChild(op.lastChild) }
+            else {
+                oe.style.display = 'none';
+                const sorted = [...objs].sort((a, b) => a.distance_cm - b.distance_cm).slice(0, 15);
+                while (op.children.length > 1) op.removeChild(op.lastChild);
+                for (const d of sorted) {
+                    const lbl = d.label_translated || d.label || '?', sub = (d.label && d.label !== lbl) ? d.label : '';
+                    const dir = d.direction_translated || d.direction, conf = Math.round((d.confidence || 0) * 100);
+                    const el = document.createElement('div');
+                    el.className = `dc${d.danger ? ' danger' : ''}`;
+                    el.innerHTML = `<div class="dc-top"><div><div class="dc-lbl">${d.danger ? '⚠ ' : ''}${lbl}</div>${sub ? `<div class="dc-sub">${sub}</div>` : ''}</div><div class="dc-conf">${conf}%</div></div><div class="dc-tags"><div class="dtag">📍 ${dir}</div><div class="dtag${d.danger ? ' red' : ''}">📏 ${d.distance_text}</div></div><div class="cbar"><div class="cfill" style="width:${conf}%"></div></div>`;
+                    op.appendChild(el);
+                }
+            }
+
+            // Faces live
+            const fl = document.getElementById('fc-live'); fl.innerHTML = '';
+            if (faces.length === 0) { fl.innerHTML = '<div class="empty-state" style="min-height:70px"><i>👁</i><p>No faces detected</p></div>' }
+            else {
+                for (const f of faces) {
+                    const cls = f.is_danger ? 'dface' : f.is_known ? 'known' : '', icon = f.is_danger ? '⚠️' : f.is_known ? '✅' : '❓';
+                    const conf = f.is_known ? ` · ${Math.round((f.confidence || 0) * 100)}%` : '';
+                    const el = document.createElement('div'); el.className = `fc ${cls}`;
+                    el.innerHTML = `<div class="favatar">${icon}</div><div class="finfo"><div class="fname">${f.name_display || f.name}</div><div class="fmeta"><span>📏 ${f.distance_text}${conf}</span>${f.is_danger ? '<span class="dtag-red">DANGER</span>' : ''}</div></div>`;
+                    fl.appendChild(el);
+                }
+            }
+        }
+
+        // ═══ AUDIO ═══
+        function doAudio(data) {
+            const faces = data.face_detections || [], objs = data.audio_detections || [];
+            for (const f of faces) { if (f.is_danger) { speak(`${f.name_display || f.name} ${f.distance_text} ${currentLang === 'hi' ? 'आगे' : 'ahead'}`); return } }
+            for (const f of faces.filter(x => x.is_known)) { speak(`${f.name_display || f.name} ${f.distance_text}`); return }
+            const danger = objs.filter(o => o.danger).sort((a, b) => a.distance_cm - b.distance_cm);
+            if (danger.length) { speak(atxt(danger[0])); return }
+            const near = [...objs].sort((a, b) => a.distance_cm - b.distance_cm);
+            if (near.length) speak(atxt(near[0]));
+        }
+
+
+        // ═══ FIRE ALERT HANDLER ═══
+        let lastFireAlert = 0;
+        const FIRE_ALERT_COOLDOWN = 5000; // ms between fire voice alerts
+
+        function handleFireAlert(data) {
+            const fires = data.fire_detections || [];
+            const hasFire = fires.length > 0;
+            const isDanger = data.has_danger_fire || fires.some(f => f.danger);
+
+            // Visual alarm overlay
+            const alarm = document.getElementById('fire-alarm');
+            const badge = document.getElementById('fire-badge');
+            const stat = document.getElementById('st-fire');
+
+            if (hasFire) {
+                alarm.classList.add('active');
+                badge.style.display = 'block';
+                badge.textContent = isDanger
+                    ? '🔥 FIRE DETECTED — DANGER'
+                    : '🔥 FIRE / SMOKE DETECTED';
+                stat.textContent = fires.length.toString();
+                stat.style.color = '#ff6a00';
+                stat.style.textShadow = '0 0 8px rgba(255,106,0,0.7)';
+            } else {
+                alarm.classList.remove('active');
+                badge.style.display = 'none';
+                stat.textContent = 'OFF';
+                stat.style.color = 'var(--muted)';
+                stat.style.textShadow = '';
+            }
+
+            // Voice alert (with cooldown)
+            if (hasFire) {
+                const now = Date.now();
+                if (now - lastFireAlert > FIRE_ALERT_COOLDOWN) {
+                    lastFireAlert = now;
+                    const msg = currentLang === 'hi'
+                        ? (isDanger ? 'आग का खतरा! तुरंत निकलें!' : 'आग या धुआँ पकड़ा गया')
+                        : (isDanger ? 'Fire detected! Danger! Please evacuate!' : 'Fire or smoke detected nearby');
+                    speak(msg);
+                }
+            }
+        }
+
+        // ═══ TRAIN CAMERA ═══
+        async function toggleTCam() { trainCamOn ? closeTCam() : await openTCam() }
+        async function openTCam() {
+            try {
+                trainStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false });
+                const v = document.getElementById('train-vid'); v.srcObject = trainStream; v.style.display = 'block'; await v.play();
+                document.getElementById('tcam-idle').style.display = 'none';
+                document.getElementById('snap-canvas').style.display = 'none';
+                document.getElementById('cap-prev').style.display = 'none';
+                trainCamOn = true;
+                const btn = document.getElementById('btn-tcam');
+                btn.textContent = '✖ Close Camera'; btn.style.borderColor = 'rgba(255,59,92,0.4)'; btn.style.color = 'var(--red)';
+                document.getElementById('btn-snap').disabled = false;
+                tMsg('Camera ready — position face and press Snap.', 'info');
+            } catch (e) { tMsg('Camera error: ' + e.message, 'err') }
+        }
+        function closeTCam() {
+            if (trainStream) trainStream.getTracks().forEach(t => t.stop()); trainStream = null; trainCamOn = false;
+            document.getElementById('train-vid').style.display = 'none';
+            document.getElementById('tcam-idle').style.display = 'flex';
+            const btn = document.getElementById('btn-tcam');
+            btn.textContent = '📷 Open Camera'; btn.style.borderColor = ''; btn.style.color = '';
+            document.getElementById('btn-snap').disabled = true;
+        }
+
+        function startCd() {
+            if (!trainCamOn) return;
+            document.getElementById('btn-snap').disabled = true;
+            let count = 3;
+            const ov = document.getElementById('cdover'), num = document.getElementById('cdnum');
+            ov.classList.add('show'); num.textContent = count;
+            cdTimer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    num.textContent = count; num.style.animation = 'none'; num.offsetHeight; num.style.animation = 'cdpop 0.3s ease-out';
+                } else {
+                    clearInterval(cdTimer); ov.classList.remove('show');
+                    snapFace(); document.getElementById('btn-snap').disabled = false;
+                }
+            }, 1000);
+        }
+
+        function snapFace() {
+            const v = document.getElementById('train-vid'), c = document.getElementById('snap-canvas'), ctx = c.getContext('2d');
+            c.width = v.videoWidth || 640; c.height = v.videoHeight || 480;
+            ctx.save(); ctx.translate(c.width, 0); ctx.scale(-1, 1); ctx.drawImage(v, 0, 0); ctx.restore();
+            capturedB64 = c.toDataURL('image/jpeg', 0.94);
+            // flash
+            const f = document.getElementById('snapflash'); f.classList.remove('go'); f.offsetHeight; f.classList.add('go');
+            // show still + preview
+            v.style.display = 'none'; c.style.display = 'block';
+            const cp = document.getElementById('cap-prev'), ci = document.getElementById('cap-img');
+            ci.src = capturedB64; cp.style.display = 'block';
+            document.getElementById('btn-train').disabled = false;
+            tMsg('📸 Face captured! Enter name and click Train.', 'info');
+        }
+
+        // ═══ SUBMIT TRAIN ═══
+        async function submitTrain() {
+            const name = document.getElementById('tname').value.trim();
+            if (!name) { tMsg('❌ Enter a name first.', 'err'); return }
+            if (!capturedB64) { tMsg('❌ Capture a photo first.', 'err'); return }
+            document.getElementById('btn-train').disabled = true;
+            tMsg('⏳ Processing face encoding…', 'info');
+            try {
+                const r = await fetch('/train_face', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, image: capturedB64 }) });
+                const d = await r.json();
+                if (d.success) {
+                    tMsg(`✅ ${name} trained! Total: ${d.known_faces_count} people.`, 'ok');
+                    document.getElementById('tname').value = ''; capturedB64 = null;
+                    document.getElementById('cap-prev').style.display = 'none';
+                    document.getElementById('snap-canvas').style.display = 'none';
+                    document.getElementById('tcam-idle').style.display = 'flex';
+                    closeTCam(); refreshFaces();
+                    setTimeout(() => goTab('faces'), 1100);
+                } else { tMsg('❌ ' + d.message, 'err'); document.getElementById('btn-train').disabled = false }
+            } catch (e) { tMsg('❌ Network error.', 'err'); document.getElementById('btn-train').disabled = false }
+        }
+        function tMsg(m, t) { const el = document.getElementById('tmsg'); el.textContent = m; el.className = 'tmsg ' + t; el.style.display = 'block' }
+
+        // ═══ KNOWN FACES ═══
+        async function refreshFaces() {
+            try {
+                const r = await fetch('/list_known_faces'), d = await r.json();
+                const g = document.getElementById('known-grid'), cnt = document.getElementById('known-cnt');
+                g.innerHTML = ''; cnt.textContent = d.count || 0;
+                if (!d.known_faces?.length) { g.innerHTML = '<p style="font-size:0.73rem;color:var(--muted)">No faces trained yet.</p>' }
+                else { for (const n of d.known_faces) { const el = document.createElement('div'); el.className = 'kchip'; el.innerHTML = `<div class="kdot"></div>${n}`; g.appendChild(el) } }
+            } catch (_) { }
+        }
+
+        // ═══ TABS ═══
+        function goTab(n) {
+            ['objects', 'faces', 'train'].forEach(t => {
+                document.getElementById('tab-' + t).classList.toggle('active', t === n);
+                document.getElementById('panel-' + t).classList.toggle('active', t === n);
+            });
+        }
+
+        // ═══ INIT ═══
+        refreshFaces();
+        // Start demo boxes on idle screen after a short delay
+        setTimeout(startDemoAnimation, 500);
+    </script>
+</body>
+
+</html>
