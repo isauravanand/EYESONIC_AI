@@ -308,12 +308,21 @@ def train_face_from_image(name, image_b64):
     try:
         if not name or name.strip() == "":
             return False, "Name cannot be empty"
-        try:
-            header, encoded = image_b64.split(",", 1)
-        except Exception:
-            return False, "Invalid base64 format"
 
-        image_data = base64.b64decode(encoded)
+        # Handle both "data:image/...;base64,<data>" and raw base64 strings
+        if "," in image_b64:
+            encoded = image_b64.split(",", 1)[1]
+        else:
+            encoded = image_b64
+
+        # Strip whitespace/newlines that can corrupt base64 decoding
+        encoded = encoded.strip()
+
+        try:
+            image_data = base64.b64decode(encoded)
+        except Exception as b64_err:
+            return False, f"Base64 decode failed: {str(b64_err)}"
+
         np_arr = np.frombuffer(image_data, np.uint8)
         frame = cv2.imdecode(np_arr, cv2.IMREAD_UNCHANGED)
 
